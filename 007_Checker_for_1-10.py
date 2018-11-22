@@ -241,7 +241,7 @@ def plot_position(PP_data):
 
 
 def main():
-    print("ver 1.1:2018/11/21  akihiro.teramoto@tel.com")
+    print("ver 1.1:2018/11/21")
     filename = glob.glob("*.xls")
     if filename != []:
         print("プロットするファイル：", filename[0])
