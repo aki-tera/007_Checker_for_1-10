@@ -246,7 +246,7 @@ def plot_position(PP_data):
     fig.show()
 
 def main():
-    print("ver 1.2:2018/11/22  akihiro.teramoto@tel.com")
+    print("ver 1.2:2018/11/22")
     filename = glob.glob("*.xls")
     print(filename)
     for row in filename:
