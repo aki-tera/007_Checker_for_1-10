@@ -3,10 +3,9 @@ import datetime
 import math
 
 from matplotlib.pyplot import figure
-#from matplotlib.pyplot import show
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
-import matplotlib.ticker as tick #目盛り操作に必要なライブラリを読み込みます
+import matplotlib.ticker as tick
 
 import glob
 
@@ -246,7 +245,7 @@ def plot_position(PP_data):
     fig.show()
 
 def main():
-    print("ver 1.2:2018/11/22")
+    print("ver 1.2:2018/11/26")
     filename = glob.glob("*.xls")
     print(filename)
     for row in filename:
