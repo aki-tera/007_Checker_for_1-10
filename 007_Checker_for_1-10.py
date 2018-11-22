@@ -1,4 +1,5 @@
 import xlrd
+import datetime
 import math
 
 import matplotlib.pyplot as plt
@@ -29,9 +30,13 @@ def get_position(GP_filename):
     """
     #ファイルを取得する
     wb = xlrd.open_workbook(GP_filename)
-    #シリアル番号を取得する
+    #シリアル番号と日付を取得する
     sheet = wb.sheet_by_name("HEADER")
     GP_serial = sheet.cell_value(33,10)
+    temp_1 = sheet.cell_value(35,10)
+    temp_2 = datetime.datetime(*xlrd.xldate_as_tuple(temp_1, wb.datemode))
+    GP_serial = GP_serial+"@"+str(temp_2.year)+"/"+str(temp_2.month)+"/"+str(temp_2.day)
+
 
     #モジュールデータを取得する
     sheet = wb.sheet_by_name("COMPARISON TO DESIGN POSITION")
@@ -239,6 +244,21 @@ def plot_position(PP_data):
     #表示する
     plt.show()
 
+def plot_position_class(PP_data):
+    fig = plt.figure() # Figureオブジェクトを作成
+    fig.suptitle(PP_data[0]+"\n", fontweight="bold")
+
+
+    ax = fig.add_subplot(1, 1, 1) # figに属するAxesオブジェクトを作成
+    ax.set_title("OMPARISON TO DESIGN POSITION @1-10")
+    ax.set_xlabel("X-axis")
+    ax.set_ylabel("Y-axis")
+
+
+
+    plt.show()
+
+
 
 def main():
     print("ver 1.1:2018/11/21  akihiro.teramoto@tel.com")
@@ -246,7 +266,7 @@ def main():
     if filename != []:
         print("プロットするファイル：", filename[0])
         plot_data = get_position(filename[0])
-        plot_position(plot_data)
+        plot_position_class(plot_data)
     else:
         print("ファイルがありません")
 
