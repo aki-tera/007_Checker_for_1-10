@@ -9,13 +9,14 @@ import matplotlib.ticker as tick
 
 import glob
 
+
 def get_position(GP_filename):
     """
     ファイルから所定のデータを出力する
 
     Parameters
     ----------
-    GP_filename:str   ファイル名称
+    GP_filename:str     ファイル名称
 
     Returns
     ----------
@@ -26,7 +27,6 @@ def get_position(GP_filename):
     GP_result[n][1][1]  Y方向の位置データ×4か所
     GP_result[n][2]     描画するラインの色
     GP_result[n][3]     描画するドットの色
-
     ----------
     """
     #ファイルを取得する
@@ -34,10 +34,9 @@ def get_position(GP_filename):
     #シリアル番号と日付を取得する
     sheet = wb.sheet_by_name("HEADER")
     GP_serial = sheet.cell_value(33,10)
-    temp_1 = sheet.cell_value(35,10)
+    temp_1 = sheet.cell_value(41,10)
     temp_2 = datetime.datetime(*xlrd.xldate_as_tuple(temp_1, wb.datemode))
-    GP_serial = GP_serial+"@"+str(temp_2.year)+"/"+str(temp_2.month)+"/"+str(temp_2.day)
-
+    GP_serial = GP_serial+"@"+str(temp_2.year)+"/"+str(temp_2.month)+"/"+str(temp_2.day)+"_"+str(temp_2.hour)+":"+str(temp_2.minute)
 
     #モジュールデータを取得する
     sheet = wb.sheet_by_name("COMPARISON TO DESIGN POSITION")
@@ -175,7 +174,7 @@ def get_position(GP_filename):
             GP_temp[5][2][GP_temp[5][5]] = round(row[6]-row[3], 2)
             #カウンタを増やす
             GP_temp[5][5] = GP_temp[5][5]+1
-
+    #グラフの表示順に結果を入れ替える
     GP_result[5] = GP_temp[0][0:5]      #"TOP-CSB"
     GP_result[6] = GP_temp[1][0:5]      #"TOP-EXT"
     GP_result[1] = GP_temp[2][0:5]      #"LOW-CSB"
@@ -192,12 +191,12 @@ def plot_position(PP_data):
     Parameters
     ----------
     PP_data:list
-        PP_data[0]        シリアル番号
-        PP_data[n][0]     モージュール名称
-        PP_data[n][1][0]  X方向の位置データ×4か所
-        PP_data[n][1][1]  Y方向の位置データ×4か所
-        PP_data[n][2]     描画するラインの色
-        PP_data[n][3]     描画するドットの色
+        PP_data[0]          シリアル番号
+        PP_data[n][0]       モージュール名称
+        PP_data[n][1][0]    X方向の位置データ×4か所
+        PP_data[n][1][1]    Y方向の位置データ×4か所
+        PP_data[n][2]       描画するラインの色
+        PP_data[n][3]       描画するドットの色
     Returns
     ----------
     """
@@ -222,7 +221,6 @@ def plot_position(PP_data):
     ax.add_patch(c)
     c = patches.Circle(xy=(0, 0), radius=2.5, ec="orange", fill=False, linestyle="dashed", linewidth = 2)
     ax.add_patch(c)
-
     #ラベルの表示
     ax.set_title(PP_data[0])
     ax.set_xlabel("X-axis")
@@ -241,13 +239,13 @@ def plot_position(PP_data):
     plt.gca().yaxis.set_minor_locator(tick.MultipleLocator(0.5))
     plt.grid(which = "minor")
 
-    #表示
-    fig.show()
+    #plt.show関数をmainに持っていくことで、IDLE以外の実行で発生するグラフ消失を防止
+    #plt.show()
+
 
 def main():
-    print("ver 1.2:2018/11/26")
+    print("ver 1.3:2018/11/26")
     filename = glob.glob("*.xls")
-    print(filename)
     for row in filename:
         if row != []:
             print("プロットするファイル：", row)
@@ -255,6 +253,9 @@ def main():
             plot_position(plot_data)
         else:
             print("ファイルがありません")
+
+    #plr.show関数をmainに持っていくことで、IDLE以外の実行で発生するグラフ消失を防止
+    plt.show()
 
 
 if __name__ == "__main__":
