@@ -10,8 +10,9 @@ pytyon3 + Atom + IDLE
 
 ライブラリ  
   * xlrd
+  * datetime
   * math
-  * matplotlib.pyplot
+  * matplotlib.pyplot import figure
   * matplotlib.patches
   * matplotlib.ticker
   * glob

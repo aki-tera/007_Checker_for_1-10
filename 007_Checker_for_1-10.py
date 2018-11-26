@@ -1,11 +1,14 @@
 import xlrd
+import datetime
 import math
 
-import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
 import matplotlib.patches as patches
-import matplotlib.ticker as tick # 目盛り操作に必要なライブラリを読み込みます
+import matplotlib.pyplot as plt
+import matplotlib.ticker as tick
 
 import glob
+
 
 def get_position(GP_filename):
     """
@@ -13,7 +16,7 @@ def get_position(GP_filename):
 
     Parameters
     ----------
-    GP_filename:str   ファイル名称
+    GP_filename:str     ファイル名称
 
     Returns
     ----------
@@ -24,14 +27,16 @@ def get_position(GP_filename):
     GP_result[n][1][1]  Y方向の位置データ×4か所
     GP_result[n][2]     描画するラインの色
     GP_result[n][3]     描画するドットの色
-
     ----------
     """
     #ファイルを取得する
     wb = xlrd.open_workbook(GP_filename)
-    #シリアル番号を取得する
+    #シリアル番号と日付を取得する
     sheet = wb.sheet_by_name("HEADER")
     GP_serial = sheet.cell_value(33,10)
+    temp_1 = sheet.cell_value(41,10)
+    temp_2 = datetime.datetime(*xlrd.xldate_as_tuple(temp_1, wb.datemode))
+    GP_serial = GP_serial+"@"+str(temp_2.year)+"/"+str(temp_2.month)+"/"+str(temp_2.day)+"_"+str(temp_2.hour)+":"+str(temp_2.minute)
 
     #モジュールデータを取得する
     sheet = wb.sheet_by_name("COMPARISON TO DESIGN POSITION")
@@ -169,7 +174,7 @@ def get_position(GP_filename):
             GP_temp[5][2][GP_temp[5][5]] = round(row[6]-row[3], 2)
             #カウンタを増やす
             GP_temp[5][5] = GP_temp[5][5]+1
-
+    #グラフの表示順に結果を入れ替える
     GP_result[5] = GP_temp[0][0:5]      #"TOP-CSB"
     GP_result[6] = GP_temp[1][0:5]      #"TOP-EXT"
     GP_result[1] = GP_temp[2][0:5]      #"LOW-CSB"
@@ -186,69 +191,72 @@ def plot_position(PP_data):
     Parameters
     ----------
     PP_data:list
-        PP_data[0]        シリアル番号
-        PP_data[n][0]     モージュール名称
-        PP_data[n][1][0]  X方向の位置データ×4か所
-        PP_data[n][1][1]  Y方向の位置データ×4か所
-        PP_data[n][2]     描画するラインの色
-        PP_data[n][3]     描画するドットの色
+        PP_data[0]          シリアル番号
+        PP_data[n][0]       モージュール名称
+        PP_data[n][1][0]    X方向の位置データ×4か所
+        PP_data[n][1][1]    Y方向の位置データ×4か所
+        PP_data[n][2]       描画するラインの色
+        PP_data[n][3]       描画するドットの色
     Returns
     ----------
     """
-    #一括パラメータ設定
-    #plt.rcParams["font.family"] ="sans-serif"#使用するフォント
-    #plt.rcParams["xtick.direction"] = "in"#x軸の目盛線が内向き("in")か外向き("out")か双方向か("inout")
-    #plt.rcParams["ytick.direction"] = "in"#y軸の目盛線が内向き("in")か外向き("out")か双方向か("inout")
-    #plt.rcParams["xtick.major.width"] = 1.0#x軸主目盛り線の線幅
-    #plt.rcParams["ytick.major.width"] = 1.0#y軸主目盛り線の線幅
-    plt.rcParams["font.size"] = 10 #フォントの大きさ
-    #plt.rcParams["axes.linewidth"] = 1.0# 軸の線幅edge linewidth。囲みの太さ
+    #Figureオブジェクトを作成
+    fig = figure()
+    fig.suptitle("COMPARISON TO DESIGN POSITION @1-10", fontweight="bold")
 
-    #軸のラベルを作成する
-    plt.title(PP_data[0]+"\nCOMPARISON TO DESIGN POSITION\n 1-10")
-    plt.xlabel("X-axis")
-    plt.ylabel("Y-axis")
+    #figに属するAxesオブジェクトを作成
+    ax = fig.add_subplot(1, 1, 1)
+    #ラインとドット、凡例を描画
+    for row in PP_data[1:]:
+        if row[1] != [0, 0, 0, 0] and row[2] != [0, 0, 0, 0]:
+            #ラインを表示
+            ax.plot(row[1], row[2], row[3])
+            #ドットを表示
+            ax.plot(row[1], row[2], row[4], label=row[0])
+            #凡例を表示
+            ax.legend(loc="best", fontsize=8)
 
-    #描画枠を決定する（X軸方向、Y軸方向）
-    #"equal"は縦横軸を同じにする
-    plt.axis([-8, 8, -8, 8])
-    plt.axes().set_aspect("equal")
+    #円を描画
+    c = patches.Circle(xy=(0, 0), radius=5, ec="red", fill=False, linestyle="solid", linewidth = 2)
+    ax.add_patch(c)
+    c = patches.Circle(xy=(0, 0), radius=2.5, ec="orange", fill=False, linestyle="dashed", linewidth = 2)
+    ax.add_patch(c)
+    #ラベルの表示
+    ax.set_title(PP_data[0])
+    ax.set_xlabel("X-axis")
+    ax.set_ylabel("Y-axis")
+    #目盛を作成
+    ax.set_xlim(-8, 8)
+    ax.set_ylim(-8, 8)
+    #縦横比率を同じにする
+    ax.set_aspect(1.0/ax.get_data_ratio())
 
     #目盛線を描画
-    plt.grid(which="major",color="black", linewidth = 1)
+    plt.grid(which = "major", color="black", linewidth = 1)
     #補助目盛線を描画
     #0.5刻みにで小目盛り(minor locator)表示
     plt.gca().xaxis.set_minor_locator(tick.MultipleLocator(0.5))
     plt.gca().yaxis.set_minor_locator(tick.MultipleLocator(0.5))
-    plt.grid(which="minor")
+    plt.grid(which = "minor")
 
-    #円を描画
-    c = patches.Circle(xy=(0, 0), radius=5, ec="red", fill=False, linestyle="solid", linewidth = 2)
-    plt.axes().add_patch(c)
-    c = patches.Circle(xy=(0, 0), radius=2.5, ec="orange", fill=False, linestyle="dashed", linewidth = 2)
-    plt.axes().add_patch(c)
-
-    for row in PP_data[1:]:
-        #ラインとドット、凡例を描画
-        if row[1] != [0, 0, 0, 0] and row[2] != [0, 0, 0, 0]:
-            plt.plot(row[1], row[2], row[3])
-            plt.plot(row[1], row[2], row[4], label=row[0])
-            plt.legend()
-
-
-    #表示する
-    plt.show()
+    #plt.show関数をmainに持っていくことで、IDLE以外の実行で発生するグラフ消失を防止
+    #plt.show()
 
 
 def main():
-    print("ver 1.1:2018/11/21")
+    print("ver 1.3:2018/11/26")
+
     filename = glob.glob("*.xls")
-    if filename != []:
-        print("プロットするファイル：", filename[0])
-        plot_data = get_position(filename[0])
-        plot_position(plot_data)
-    else:
-        print("ファイルがありません")
+    for row in filename:
+        if row != []:
+            print("プロットするファイル：", row)
+            plot_data = get_position(row)
+            plot_position(plot_data)
+        else:
+            print("ファイルがありません")
+
+    #plr.show関数をmainに持っていくことで、IDLE以外の実行で発生するグラフ消失を防止
+    plt.show()
 
 
 if __name__ == "__main__":
