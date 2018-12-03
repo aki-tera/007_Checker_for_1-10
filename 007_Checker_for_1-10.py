@@ -170,7 +170,7 @@ def get_position(GP_filename):
             #Y方向の差分
             GP_temp[2][2][GP_temp[2][6]] = round(row[6]-row[3], 2)
             #モジュールIDを登録
-            if GP_temp[5][6] == 0:
+            if GP_temp[2][6] == 0:
                 GP_temp[2][5] = row[0]
             #カウンタを増やす
             GP_temp[2][6] = GP_temp[2][6]+1
@@ -283,7 +283,7 @@ def plot_position(PP_data):
 
 
 def main():
-    print("ver 1.4:2018/12/03")
+    print("ver 1.41:2018/12/03")
     filename = glob.glob("*.xls")
     for row in filename:
         if row != []:
