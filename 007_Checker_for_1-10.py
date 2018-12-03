@@ -24,16 +24,10 @@ def get_position(GP_filename):
     GP_result[0]        シリアル番号
     GP_result[n][0]     該当レイアウト
     GP_result[n][1][0]  X方向の位置データ×4か所
-<<<<<<< HEAD
-    GP_result[n][1][1]  Y方向の位置データ×4か所
-    GP_result[n][2]     描画するラインの色
-    GP_result[n][3]     描画するドットの色
-=======
     GP_result[n][2][1]  Y方向の位置データ×4か所
     GP_result[n][3]     描画するラインの色
     GP_result[n][4]     描画するドットの色
     GP_result[n][5]     先頭のモジュールID
->>>>>>> develop
     ----------
     """
     #ファイルを取得する
@@ -212,16 +206,6 @@ def get_position(GP_filename):
             if GP_temp[5][6] == 0:
                 GP_temp[5][5] = row[0]
             #カウンタを増やす
-<<<<<<< HEAD
-            GP_temp[5][5] = GP_temp[5][5]+1
-    #グラフの表示順に結果を入れ替える
-    GP_result[5] = GP_temp[0][0:5]      #"TOP-CSB"
-    GP_result[6] = GP_temp[1][0:5]      #"TOP-EXT"
-    GP_result[1] = GP_temp[2][0:5]      #"LOW-CSB"
-    GP_result[2] = GP_temp[3][0:5]      #"LOW-EXT"
-    GP_result[3] = GP_temp[4][0:5]      #"MID-CSB"
-    GP_result[4] = GP_temp[5][0:5]      #"MID-EXT"
-=======
             GP_temp[5][6] = GP_temp[5][6]+1
     #グラフの表示順に結果を入れ替える
     GP_result[5] = GP_temp[0][0:6]      #"TOP-CSB"
@@ -230,7 +214,7 @@ def get_position(GP_filename):
     GP_result[2] = GP_temp[3][0:6]      #"LOW-EXT"
     GP_result[3] = GP_temp[4][0:6]      #"MID-CSB"
     GP_result[4] = GP_temp[5][0:6]      #"MID-EXT"
->>>>>>> develop
+
     return(GP_result)
 
 
@@ -244,27 +228,17 @@ def plot_position(PP_data):
         PP_data[0]          シリアル番号
         PP_data[n][0]       モージュール名称
         PP_data[n][1][0]    X方向の位置データ×4か所
-<<<<<<< HEAD
-        PP_data[n][1][1]    Y方向の位置データ×4か所
-        PP_data[n][2]       描画するラインの色
-        PP_data[n][3]       描画するドットの色
-=======
         PP_data[n][2][1]    Y方向の位置データ×4か所
         PP_data[n][3]       描画するラインの色
         PP_data[n][4]       描画するドットの色
         PP_data[n][5]       先頭のモジュールID
->>>>>>> develop
     Returns
     ----------
     """
     #Figureオブジェクトを作成
-<<<<<<< HEAD
-    fig = figure()
-=======
     #ウインドウサイズを指定(横×縦)
     fig = figure(figsize = (8, 8))
     #描画タイトルを表示
->>>>>>> develop
     fig.suptitle("COMPARISON TO DESIGN POSITION @1-10", fontweight="bold")
 
     #figに属するAxesオブジェクトを作成
@@ -278,11 +252,8 @@ def plot_position(PP_data):
             ax.plot(row[1], row[2], row[4], label=row[0])
             #凡例を表示
             ax.legend(loc="best", fontsize=8)
-<<<<<<< HEAD
-=======
             #ラベルを表示
             ax.text(row[1][0], row[2][0], row[5], fontsize=7, horizontalalignment='right', verticalalignment = "baseline" )
->>>>>>> develop
 
     #円を描画
     c = patches.Circle(xy=(0, 0), radius=5, ec="red", fill=False, linestyle="solid", linewidth = 2)
@@ -312,12 +283,7 @@ def plot_position(PP_data):
 
 
 def main():
-<<<<<<< HEAD
-    print("ver 1.3:2018/11/26")
-
-=======
     print("ver 1.4:2018/12/03")
->>>>>>> develop
     filename = glob.glob("*.xls")
     for row in filename:
         if row != []:
