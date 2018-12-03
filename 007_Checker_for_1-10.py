@@ -24,9 +24,10 @@ def get_position(GP_filename):
     GP_result[0]        シリアル番号
     GP_result[n][0]     該当レイアウト
     GP_result[n][1][0]  X方向の位置データ×4か所
-    GP_result[n][1][1]  Y方向の位置データ×4か所
-    GP_result[n][2]     描画するラインの色
-    GP_result[n][3]     描画するドットの色
+    GP_result[n][2][1]  Y方向の位置データ×4か所
+    GP_result[n][3]     描画するラインの色
+    GP_result[n][4]     描画するドットの色
+    GP_result[n][5]     先頭のモジュールID
     ----------
     """
     #ファイルを取得する
@@ -89,7 +90,7 @@ def get_position(GP_filename):
     GP_max_z = max(GP_data, key = lambda x: x[4])[4]
     GP_min_z = min(GP_data, key = lambda x: x[4])[4]
     #結果算出用配列の準備
-    GP_temp = [[0]*6 for i in range(6)]
+    GP_temp = [[0]*7 for i in range(6)]
     #該当するレイアウト
     GP_temp[0][0] = "TOP-CSB"
     GP_temp[1][0] = "TOP-EXT"
@@ -125,62 +126,94 @@ def get_position(GP_filename):
     GP_temp[3][2] = [0, 0, 0, 0]
     GP_temp[4][2] = [0, 0, 0, 0]
     GP_temp[5][2] = [0, 0, 0, 0]
+    #FOR文用のカウンタ
+    GP_temp[0][6] = 0
+    GP_temp[1][6] = 0
+    GP_temp[2][6] = 0
+    GP_temp[3][6] = 0
+    GP_temp[4][6] = 0
+    GP_temp[5][6] = 0
+    #先頭のモジュールID
+    GP_temp[0][5] = "0-0"
+    GP_temp[1][5] = "0-0"
+    GP_temp[2][5] = "0-0"
+    GP_temp[3][5] = "0-0"
+    GP_temp[4][5] = "0-0"
+    GP_temp[5][5] = "0-0"
     for row in sorted(GP_data, key = lambda x: x[3]):
         if row[4]==GP_min_z and row[2]>0:
             #TOP-IN側の処理
             #X方向の差分
-            GP_temp[0][1][GP_temp[0][5]] = round(row[5]-row[2], 2)
+            GP_temp[0][1][GP_temp[0][6]] = round(row[5]-row[2], 2)
             #Y方向の差分
-            GP_temp[0][2][GP_temp[0][5]] = round(row[6]-row[3], 2)
+            GP_temp[0][2][GP_temp[0][6]] = round(row[6]-row[3], 2)
+            #モジュールIDを登録
+            if GP_temp[0][6] == 0:
+                GP_temp[0][5] = row[0]
             #カウンタを増やす
-            GP_temp[0][5] = GP_temp[0][5]+1
+            GP_temp[0][6] = GP_temp[0][6]+1
         elif row[4]==GP_min_z and row[2]<0:
             #TOP-EXT側の処理
             #X方向の差分
-            GP_temp[1][1][GP_temp[1][5]] = round(row[5]-row[2], 2)
+            GP_temp[1][1][GP_temp[1][6]] = round(row[5]-row[2], 2)
             #Y方向の差分
-            GP_temp[1][2][GP_temp[1][5]] = round(row[6]-row[3], 2)
+            GP_temp[1][2][GP_temp[1][6]] = round(row[6]-row[3], 2)
+            #モジュールIDを登録
+            if GP_temp[1][6] == 0:
+                GP_temp[1][5] = row[0]
             #カウンタを増やす
-            GP_temp[1][5] = GP_temp[1][5]+1
+            GP_temp[1][6] = GP_temp[1][6]+1
         elif row[4]==GP_max_z and row[2]>0:
             #LOW-CSB側の処理
             #X方向の差分
-            GP_temp[2][1][GP_temp[2][5]] = round(row[5]-row[2], 2)
+            GP_temp[2][1][GP_temp[2][6]] = round(row[5]-row[2], 2)
             #Y方向の差分
-            GP_temp[2][2][GP_temp[2][5]] = round(row[6]-row[3], 2)
+            GP_temp[2][2][GP_temp[2][6]] = round(row[6]-row[3], 2)
+            #モジュールIDを登録
+            if GP_temp[5][6] == 0:
+                GP_temp[2][5] = row[0]
             #カウンタを増やす
-            GP_temp[2][5] = GP_temp[2][5]+1
+            GP_temp[2][6] = GP_temp[2][6]+1
         elif row[4]==GP_max_z and row[2]<0:
             #LOW-EX側の処理
             #X方向の差分
-            GP_temp[3][1][GP_temp[3][5]] = round(row[5]-row[2], 2)
+            GP_temp[3][1][GP_temp[3][6]] = round(row[5]-row[2], 2)
             #Y方向の差分
-            GP_temp[3][2][GP_temp[3][5]] = round(row[6]-row[3], 2)
+            GP_temp[3][2][GP_temp[3][6]] = round(row[6]-row[3], 2)
+            #モジュールIDを登録
+            if GP_temp[3][6] == 0:
+                GP_temp[3][5] = row[0]
             #カウンタを増やす
-            GP_temp[3][5] = GP_temp[3][5]+1
+            GP_temp[3][6] = GP_temp[3][6]+1
         elif row[4]!=GP_DEFAULT_NUMBER and row[2]>0:
             #MID-CSB側の処理
             #X方向の差分
-            GP_temp[4][1][GP_temp[4][5]] = round(row[5]-row[2], 2)
+            GP_temp[4][1][GP_temp[4][6]] = round(row[5]-row[2], 2)
             #Y方向の差分
-            GP_temp[4][2][GP_temp[4][5]] = round(row[6]-row[3], 2)
+            GP_temp[4][2][GP_temp[4][6]] = round(row[6]-row[3], 2)
+            #モジュールIDを登録
+            if GP_temp[4][6] == 0:
+                GP_temp[4][5] = row[0]
             #カウンタを増やす
-            GP_temp[4][5] = GP_temp[4][5]+1
+            GP_temp[4][6] = GP_temp[4][6]+1
         elif row[4]!=GP_DEFAULT_NUMBER and row[2]<0:
             #MID-EX側の処理
             #X方向の差分
-            GP_temp[5][1][GP_temp[5][5]] = round(row[5]-row[2], 2)
+            GP_temp[5][1][GP_temp[5][6]] = round(row[5]-row[2], 2)
             #Y方向の差分
-            GP_temp[5][2][GP_temp[5][5]] = round(row[6]-row[3], 2)
+            GP_temp[5][2][GP_temp[5][6]] = round(row[6]-row[3], 2)
+            #モジュールIDを登録
+            if GP_temp[5][6] == 0:
+                GP_temp[5][5] = row[0]
             #カウンタを増やす
-            GP_temp[5][5] = GP_temp[5][5]+1
+            GP_temp[5][6] = GP_temp[5][6]+1
     #グラフの表示順に結果を入れ替える
-    GP_result[5] = GP_temp[0][0:5]      #"TOP-CSB"
-    GP_result[6] = GP_temp[1][0:5]      #"TOP-EXT"
-    GP_result[1] = GP_temp[2][0:5]      #"LOW-CSB"
-    GP_result[2] = GP_temp[3][0:5]      #"LOW-EXT"
-    GP_result[3] = GP_temp[4][0:5]      #"MID-CSB"
-    GP_result[4] = GP_temp[5][0:5]      #"MID-EXT"
+    GP_result[5] = GP_temp[0][0:6]      #"TOP-CSB"
+    GP_result[6] = GP_temp[1][0:6]      #"TOP-EXT"
+    GP_result[1] = GP_temp[2][0:6]      #"LOW-CSB"
+    GP_result[2] = GP_temp[3][0:6]      #"LOW-EXT"
+    GP_result[3] = GP_temp[4][0:6]      #"MID-CSB"
+    GP_result[4] = GP_temp[5][0:6]      #"MID-EXT"
     return(GP_result)
 
 
@@ -194,14 +227,17 @@ def plot_position(PP_data):
         PP_data[0]          シリアル番号
         PP_data[n][0]       モージュール名称
         PP_data[n][1][0]    X方向の位置データ×4か所
-        PP_data[n][1][1]    Y方向の位置データ×4か所
-        PP_data[n][2]       描画するラインの色
-        PP_data[n][3]       描画するドットの色
+        PP_data[n][2][1]    Y方向の位置データ×4か所
+        PP_data[n][3]       描画するラインの色
+        PP_data[n][4]       描画するドットの色
+        PP_data[n][5]       先頭のモジュールID
     Returns
     ----------
     """
     #Figureオブジェクトを作成
-    fig = figure()
+    #ウインドウサイズを指定(横×縦)
+    fig = figure(figsize = (8, 8))
+    #描画タイトルを表示
     fig.suptitle("COMPARISON TO DESIGN POSITION @1-10", fontweight="bold")
 
     #figに属するAxesオブジェクトを作成
@@ -215,6 +251,8 @@ def plot_position(PP_data):
             ax.plot(row[1], row[2], row[4], label=row[0])
             #凡例を表示
             ax.legend(loc="best", fontsize=8)
+            #ラベルを表示
+            ax.text(row[1][0], row[2][0], row[5], fontsize=7, horizontalalignment='right', verticalalignment = "baseline" )
 
     #円を描画
     c = patches.Circle(xy=(0, 0), radius=5, ec="red", fill=False, linestyle="solid", linewidth = 2)
