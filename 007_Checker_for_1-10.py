@@ -55,7 +55,7 @@ def get_position(GP_filename):
     GP_module_id = sheet.row_values(GP_row_index)
 
     #各方向の計算式を設定する
-    GP_cal_x = lambda a: math.sin((math.pi*a/165888))*512
+    GP_cal_x = lambda a: math.sin((math.pi*a/165888))*458
     GP_cal_y = lambda a: a*15/2048
     GP_cal_z = lambda a: a/256
     #詳細データを取得する
