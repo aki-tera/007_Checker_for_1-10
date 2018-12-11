@@ -283,7 +283,7 @@ def plot_position(PP_data):
 
 
 def main():
-    print("ver 1.41:2018/12/03")
+    print("ver 1.42:2018/12/11")
     filename = glob.glob("*.xls")
     for row in filename:
         if row != []:
