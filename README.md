@@ -1,4 +1,6 @@
 # 007_Checker_for_1-10
+![](https://img.shields.io/badge/type-python3-green)  ![](https://img.shields.io/badge/windows%20build-passing-green) ![](https://img.shields.io/badge/license-MIT-green) 
+
 "Specific use only and only Japanese" Create a graph from a specific Excel file  
 【特定用途のみ】特定のエクセルファイルからグラフを作成する
 
